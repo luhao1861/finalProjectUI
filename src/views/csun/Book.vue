@@ -3,6 +3,7 @@
     <el-col :span="6"><div>
       <el-upload
         class="upload-demo"
+        accept=".jar, .zip"
         drag
         action="https://jsonplaceholder.typicode.com/posts/"
         :file-list="fileList"

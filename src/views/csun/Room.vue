@@ -4,17 +4,13 @@
           <el-form-item>
             <el-input
               v-model="searchForm.roomNumber"
-              placeholder="Room Number"
+              placeholder="Jar FileName"
               clearable>
             </el-input>
           </el-form-item>
 
           <el-form-item>
             <el-button @click="getRoomList">Search</el-button>
-          </el-form-item>
-
-          <el-form-item>
-            <el-button type="primary" @click="dialogVisible = true">Insert</el-button>
           </el-form-item>
           <el-form-item>
             <el-popconfirm title="Do you confirm this multiple deletion?" @confirm="delHandle(null)">
@@ -37,29 +33,29 @@
             width="55">
           </el-table-column>
           <el-table-column
-            prop="roomNumber"
-            label="Room Number">
+            prop="fileName"
+            label="File Name">
           </el-table-column>
           <el-table-column
-            prop="address"
-            label="Address"
+            prop="path"
+            label="Path"
             show-overflow-tooltip>
           </el-table-column>
           <el-table-column
             prop="status"
             label="Status">
             <template slot-scope="scope">
-              <el-tag size="small" v-if="scope.row.status === 1" type="success">Enable</el-tag>
-              <el-tag size="small" v-else-if="scope.row.status === 0" type="danger">Disable</el-tag>
+              <el-tag size="small" v-if="scope.row.status === 1" type="success">Current Analysis</el-tag>
+              <el-tag size="small" v-else-if="scope.row.status === 0" type="danger">Unanalysis</el-tag>
             </template>
-
           </el-table-column>
+
           <el-table-column
             prop="icon"
             label="Operation">
 
             <template slot-scope="scope">
-              <el-button type="text" @click="editHandle(scope.row.id)">Edit</el-button>
+              <el-button type="text" @click="editHandle(scope.row.id)">Analysis</el-button>
               <el-divider direction="vertical"></el-divider>
 
               <template>
@@ -82,50 +78,6 @@
           :page-size="size"
           :total="total">
         </el-pagination>
-
-        <el-dialog
-          title="Room Info"
-          :visible.sync="dialogVisible"
-          width="600px"
-          :before-close="handleClose">
-
-          <el-form :model="editForm" :rules="editFormRules" ref="editForm" label-width="120px" class="demo-editForm">
-
-            <el-form-item label="Room Number" prop="roomNumber" label-width="120px">
-              <el-input v-model="editForm.roomNumber" autocomplete="off"></el-input>
-            </el-form-item>
-
-            <el-form-item label="Address" prop="address" label-width="120px">
-              <el-input v-model="editForm.address" autocomplete="off"></el-input>
-            </el-form-item>
-
-            <el-form-item label="Remark" prop="remark" label-width="120px">
-              <el-input v-model="editForm.remark" autocomplete="off"></el-input>
-            </el-form-item>
-
-            <el-form-item label="Status" prop="status" label-width="120px">
-              <el-radio-group v-model="editForm.status">
-                <el-radio :label=0>Disable</el-radio>
-                <el-radio :label=1>Enable</el-radio>
-              </el-radio-group>
-            </el-form-item>
-
-            <el-form-item>
-              <el-button type="primary" @click="submitForm('editForm')">Confirm</el-button>
-              <el-button @click="resetForm('editForm')">Close</el-button>
-            </el-form-item>
-          </el-form>
-        </el-dialog>
-        <el-dialog
-          title="Set Role"
-          :visible.sync="permDialogVisible"
-          width="600px">
-          <span slot="footer" class="dialog-footer">
-        <el-button @click="permDialogVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="submitPermFormHandle('permForm')">Confirm</el-button>
-      </span>
-        </el-dialog>
-
       </div>
 </template>
 
@@ -219,9 +171,8 @@ export default {
     },
 
     getRoomList () {
-      this.$axios.get('/library/room/list', {
+      this.$axios.get('/file/list', {
         params: {
-          roomNumber: this.searchForm.roomNumber,
           current: this.current,
           size: this.size
         }
@@ -257,9 +208,15 @@ export default {
       })
     },
     editHandle (id) {
-      this.$axios.get('/library/room/info/' + id).then(res => {
-        this.editForm = res.data.data
-        this.dialogVisible = true
+      this.$axios.get('/file/analysis/' + id).then(res => {
+        this.$message({
+          showClose: true,
+          message: 'success',
+          type: 'success',
+          onClose: () => {
+            this.getRoomList()
+          }
+        })
       })
     },
     delHandle (id) {
