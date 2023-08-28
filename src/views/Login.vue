@@ -150,6 +150,7 @@ export default {
     getCaptchaImg () {
       this.$axios.get('/captcha').then(res => {
         console.log(res.data.data.captchaImg)
+        alert(res.data.data.captchaImg)
         this.loginForm.token = res.data.data.token
         this.captchaImg = res.data.data.captchaImg
         this.loginForm.code = ''

@@ -229,7 +229,7 @@ export default {
         })
       }
       console.log(ids)
-      this.$axios.post('/library/room/delete', ids).then(res => {
+      this.$axios.post('/dictionary/delete', ids).then(res => {
         this.$message({
           showClose: true,
           message: 'success',
